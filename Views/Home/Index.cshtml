@@ -1,8 +1,89 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Find Your Next Event";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="jumbotron text-center bg-light p-5 rounded-3" style="background-image: url('/images/concert-hero.jpg'); background-size: cover; background-position: center; color: white;">
+    <h1 class="display-4 fw-bold">Discover Your Next Experience</h1>
+    <p class="lead fs-4">Book tickets for the best concerts, theatre, and cultural events in Sri Lanka.</p>
+    <hr class="my-4">
+
+    <form class="d-flex" role="search" asp-controller="Event" asp-action="Search">
+        <input class="form-control form-control-lg me-2" type="search" name="query" placeholder="Search for events, artists, or venues..." aria-label="Search">
+        <button class="btn btn-primary btn-lg" type="submit">
+            <i class="fa-solid fa-search"></i>
+        </button>
+    </form>
+</div>
+
+<div class="container mt-5">
+    <h2 class="pb-2 border-bottom">Upcoming Events</h2>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="/images/event-concert.jpg" class="card-img-top" alt="Concert Event">
+                <div class="card-body">
+                    <h5 class="card-title">Galle Music Festival</h5>
+                    <p class="card-text text-muted">
+                        <i class="fa-solid fa-calendar-alt"></i> Sat, Nov 15
+                        <span class="mx-2">|</span>
+                        <i class="fa-solid fa-map-marker-alt"></i> Galle Fort
+                    </p>
+                    <p class="card-text">Experience the annual music festival with local and international artists.</p>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    <a href="#" class="btn btn-primary w-100">Get Tickets</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="/images/event-theatre.jpg" class="card-img-top" alt="Theatre Event">
+                <div class="card-body">
+                    <h5 class="card-title">Maname Theatre Show</h5>
+                    <p class="card-text text-muted">
+                        <i class="fa-solid fa-calendar-alt"></i> Fri, Nov 21
+                        <span class="mx-2">|</span>
+                        <i class="fa-solid fa-map-marker-alt"></i> Lionel Wendt, Colombo
+                    </p>
+                    <p class="card-text">A classic tale brought to life on the big stage. Don't miss this masterpiece.</p>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    <a href="#" class="btn btn-primary w-100">Get Tickets</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="/images/event-cultural.jpg" class="card-img-top" alt="Cultural Event">
+                <div class="card-body">
+                    <h5 class="card-title">Kandy Esala Perahera</h5>
+                    <p class="card-text text-muted">
+                        <i class="fa-solid fa-calendar-alt"></i> Mon, Nov 24
+                        <span class="mx-2">|</span>
+                        <i class="fa-solid fa-map-marker-alt"></i> Kandy
+                    </p>
+                    <p class="card-text">Book your viewing gallery seats for the grand cultural pageant.</p>
+                </div>
+                <div class="card-footer bg-white border-0">
+                    <a href="#" class="btn btn-primary w-100">Book Seats</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h2 class="pb-2 border-bottom">Browse by Category</h2>
+    <div class="d-flex flex-wrap gap-2 mt-3">
+        <a href="#" class="btn btn-outline-secondary btn-lg">Concerts</a>
+        <a href="#" class="btn btn-outline-secondary btn-lg">Theatre</a>
+        <a href="#" class="btn btn-outline-secondary btn-lg">Cultural</a>
+        <a href="#" class="btn btn-outline-secondary btn-lg">Workshops</a>
+        <a href="#" class="btn btn-outline-secondary btn-lg">Festivals</a>
+    </div>
 </div>
