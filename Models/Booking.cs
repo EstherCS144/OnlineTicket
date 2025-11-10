@@ -8,9 +8,8 @@ namespace OnlineTicket.Models
     {
         public int BookingId { get; set; }
 
-        // Customer (IdentityUser)
-        public string CustomerId { get; set; } // FK to AspNetUsers
-        public IdentityUser Customer { get; set; }
+        public int CustomerId { get; set; } 
+        public Customer Customer { get; set; }
 
         public int EventId { get; set; }
         public Event Event { get; set; }

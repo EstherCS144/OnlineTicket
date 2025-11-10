@@ -19,6 +19,13 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
+// --- Seed Admin and Roles ---
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await SeedData.InitializeAsync(services);
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

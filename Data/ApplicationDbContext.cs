@@ -18,10 +18,25 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<Promotion> Promotions { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Venue> Venues { get; set; }
+    public DbSet<Customer> Customers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        // Customer <-> IdentityUser (1:1)
+        builder.Entity<Customer>()
+            .HasOne(c => c.User)
+            .WithOne()
+            .HasForeignKey<Customer>(c => c.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Customer <-> booking (1:N)
+        builder.Entity<Booking>()
+            .HasOne(o => o.Customer)
+            .WithMany(c => c.Bookings)
+            .HasForeignKey(o => o.CustomerId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // Category -> Events
         builder.Entity<Category>()
@@ -73,10 +88,10 @@ public class ApplicationDbContext : IdentityDbContext
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<Promotion>()
-     .HasOne(p => p.Event)
-     .WithMany(e => e.Promotions)
-     .HasForeignKey(p => p.EventId)
-     .OnDelete(DeleteBehavior.Restrict); // prevents multiple cascade paths
+             .HasOne(p => p.Event)
+             .WithMany(e => e.Promotions)
+             .HasForeignKey(p => p.EventId)
+             .OnDelete(DeleteBehavior.Restrict); // prevents multiple cascade paths
 
         builder.Entity<Promotion>()
             .HasOne(p => p.TicketType)

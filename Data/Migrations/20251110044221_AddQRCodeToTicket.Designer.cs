@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineTicket.Data;
 
@@ -11,9 +12,11 @@ using OnlineTicket.Data;
 namespace OnlineTicket.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251110044221_AddQRCodeToTicket")]
+    partial class AddQRCodeToTicket
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -506,9 +509,6 @@ namespace OnlineTicket.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("TotalSeats")
-                        .HasColumnType("int");
-
                     b.HasKey("TicketTypeId");
 
                     b.HasIndex("EventId");
@@ -703,7 +703,7 @@ namespace OnlineTicket.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("OnlineTicket.Models.TicketType", "TicketType")
-                        .WithMany("Tickets")
+                        .WithMany()
                         .HasForeignKey("TicketTypeId");
 
                     b.Navigation("Booking");
@@ -756,11 +756,6 @@ namespace OnlineTicket.Data.Migrations
             modelBuilder.Entity("OnlineTicket.Models.Promotion", b =>
                 {
                     b.Navigation("Bookings");
-                });
-
-            modelBuilder.Entity("OnlineTicket.Models.TicketType", b =>
-                {
-                    b.Navigation("Tickets");
                 });
 
             modelBuilder.Entity("OnlineTicket.Models.Venue", b =>

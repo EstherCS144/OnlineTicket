@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Net.Sockets;
 
 namespace OnlineTicket.Models
 {
@@ -15,5 +16,9 @@ namespace OnlineTicket.Models
         public TicketType TicketType { get; set; }
 
         public string SeatNumber { get; set; }
+
+        // QR code for the ticket
+        [Column(TypeName = "nvarchar(max)")]
+        public string QRCode { get; set; }
     }
 }
