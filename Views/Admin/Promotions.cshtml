@@ -1,0 +1,92 @@
+@model IEnumerable<OnlineTicket.Models.Admin.PromotionDto>
+
+@{
+    ViewData["Title"] = "Manage Promotions";
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item active">Promotions</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">
+        <i class="bi bi-tag-fill"></i> Promotion Approval
+    </h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">All Promotions</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Code</th>
+                                <th>Event</th>
+                                <th>Ticket Type</th>
+                                <th>Discount</th>
+                                <th>Valid Until</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var promo in Model)
+                            {
+                                <tr>
+                                    <td>@promo.Name</td>
+                                    <td><code>@promo.Code</code></td>
+                                    <td>@promo.EventTitle</td>
+                                    <td>Used @promo.UsageCount times</td>
+                                    <td>@promo.DiscountPercentage%</td>
+                                    <td>@promo.EndDate.ToString("MMM dd, yyyy")</td>
+                                    <td>
+                                        @if (promo.IsActive && promo.EndDate > DateTime.UtcNow)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else if (promo.EndDate <= DateTime.UtcNow)
+                                        {
+                                            <span class="badge bg-secondary">Expired</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning">Inactive</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <form asp-action="TogglePromotion" method="post" class="d-inline">
+                                            <input type="hidden" name="promotionId" value="@promo.PromotionId" />
+                                            <button type="submit" class="btn btn-sm @(promo.IsActive ? "btn-warning" : "btn-success")">
+                                                <i class="bi bi-@(promo.IsActive ? "x-circle" : "check-circle")"></i> @(promo.IsActive ? "Deactivate" : "Activate")
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">No promotions found.</p>
+            }
+        </div>
+    </div>
+</div>

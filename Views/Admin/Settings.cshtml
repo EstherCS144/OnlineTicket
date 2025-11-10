@@ -1,0 +1,149 @@
+@model OnlineTicket.Models.Admin.PlatformSettingsDto
+
+@{
+    ViewData["Title"] = "Platform Settings";
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item active">Settings</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">
+        <i class="bi bi-gear-fill"></i> Platform Settings & Security
+    </h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">General Settings</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="UpdateSettings" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Site Name</label>
+                            <input type="text" class="form-control" name="SiteName" value="@Model.SiteName" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Support Email</label>
+                            <input type="email" class="form-control" name="SiteEmail" value="@Model.SiteEmail" />
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" name="AllowRegistration" id="allowReg" @(Model.AllowRegistration ? "checked" : "")>
+                            <label class="form-check-label" for="allowReg">
+                                Allow new user registration
+                            </label>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" name="RequireEmailConfirmation" id="reqEmail" @(Model.RequireEmailConfirmation ? "checked" : "")>
+                            <label class="form-check-label" for="reqEmail">
+                                Require email confirmation
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Save Settings
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Security Settings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Two-Factor Authentication</h6>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="require2FA">
+                            <label class="form-check-label" for="require2FA">
+                                Require 2FA for all admins
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <h6>Session Timeout</h6>
+                        <select class="form-select">
+                            <option value="30">30 minutes</option>
+                            <option value="60" selected>1 hour</option>
+                            <option value="120">2 hours</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <h6>Login Attempts</h6>
+                        <input type="number" class="form-control" value="5" min="3" max="10" />
+                        <small class="text-muted">Maximum failed login attempts before lockout</small>
+                    </div>
+                    <button type="button" class="btn btn-warning">
+                        <i class="bi bi-shield-lock"></i> Update Security
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Email Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">SMTP Server</label>
+                        <input type="text" class="form-control" placeholder="smtp.example.com" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">SMTP Port</label>
+                        <input type="number" class="form-control" value="587" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">From Email</label>
+                        <input type="email" class="form-control" value="noreply@starevents.com" />
+                    </div>
+                    <button type="button" class="btn btn-info">
+                        <i class="bi bi-envelope"></i> Test Email
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Maintenance Mode</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">
+                        Put the platform in maintenance mode to prevent users from accessing the site during updates.
+                    </p>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="maintenanceMode" @(Model.MaintenanceMode ? "checked" : "")>
+                        <label class="form-check-label" for="maintenanceMode">
+                            Enable Maintenance Mode
+                        </label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Maintenance Message</label>
+                        <textarea class="form-control" rows="3">We are currently performing scheduled maintenance. We'll be back shortly!</textarea>
+                    </div>
+                    <button type="button" class="btn btn-danger">
+                        <i class="bi bi-tools"></i> Apply Maintenance Mode
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
