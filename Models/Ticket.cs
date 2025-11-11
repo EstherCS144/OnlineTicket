@@ -17,8 +17,6 @@ namespace OnlineTicket.Models
 
         public string SeatNumber { get; set; }
 
-        // QR code for the ticket
-        [Column(TypeName = "nvarchar(max)")]
         public string QRCode { get; set; }
     }
 }

@@ -1,0 +1,98 @@
+@{
+    ViewData["Title"] = "Reports & Analytics";
+    var eventSales = ViewBag.EventSales;
+    var monthlySales = ViewBag.MonthlySales;
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item active">Reports</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">
+        <i class="bi bi-bar-chart-fill"></i> Reports & Analytics
+    </h1>
+
+    <div class="row g-4">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Monthly Sales Trend (Last 6 Months)</h5>
+                </div>
+                <div class="card-body">
+                    @if (monthlySales != null && monthlySales.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Month</th>
+                                        <th>Total Bookings</th>
+                                        <th>Total Revenue</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var month in monthlySales)
+                                    {
+                                        <tr>
+                                            <td>@month.Month</td>
+                                            <td>@month.TotalBookings</td>
+                                            <td>$@month.TotalRevenue.ToString("N2")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No monthly sales data available.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Top Events by Revenue</h5>
+                </div>
+                <div class="card-body">
+                    @if (eventSales != null && eventSales.Count > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Event Name</th>
+                                        <th>Event Date</th>
+                                        <th>Total Bookings</th>
+                                        <th>Total Revenue</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var evt in eventSales)
+                                    {
+                                        <tr>
+                                            <td>@evt.EventName</td>
+                                            <td>@evt.EventDate.ToString("MMM dd, yyyy")</td>
+                                            <td>@evt.TotalBookings</td>
+                                            <td><strong>$@evt.TotalRevenue.ToString("N2")</strong></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No event sales data available.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
