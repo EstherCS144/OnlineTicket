@@ -39,8 +39,8 @@
                                     {
                                         <tr>
                                             <td>@month.Month</td>
-                                            <td>@month.TotalBookings</td>
-                                            <td>$@month.TotalRevenue.ToString("N2")</td>
+                                            <td>@month.Bookings</td>
+                                            <td>$@month.Revenue.ToString("N2")</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -68,8 +68,7 @@
                                 <thead>
                                     <tr>
                                         <th>Event Name</th>
-                                        <th>Event Date</th>
-                                        <th>Total Bookings</th>
+                                        <th>Tickets Sold</th>
                                         <th>Total Revenue</th>
                                     </tr>
                                 </thead>
@@ -77,10 +76,9 @@
                                     @foreach (var evt in eventSales)
                                     {
                                         <tr>
-                                            <td>@evt.EventName</td>
-                                            <td>@evt.EventDate.ToString("MMM dd, yyyy")</td>
-                                            <td>@evt.TotalBookings</td>
-                                            <td><strong>$@evt.TotalRevenue.ToString("N2")</strong></td>
+                                            <td>@evt.EventTitle</td>
+                                            <td>@evt.TicketsSold</td>
+                                            <td><strong>$@evt.Revenue.ToString("N2")</strong></td>
                                         </tr>
                                     }
                                 </tbody>

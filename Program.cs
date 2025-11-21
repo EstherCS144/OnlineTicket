@@ -10,29 +10,19 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 });
 
 // Add services to the container.
-var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
-if (string.IsNullOrEmpty(connectionString))
-{
-    connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-}
-else
-{
-    var databaseUri = new Uri(connectionString);
-    var userInfo = databaseUri.UserInfo.Split(':');
-    var port = databaseUri.Port > 0 ? databaseUri.Port : 5432;
-    connectionString = $"Host={databaseUri.Host};Port={port};Database={databaseUri.LocalPath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
-}
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") 
+    ?? builder.Configuration.GetConnectionString("DefaultConnection") 
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' or 'DATABASE_URL' environment variable not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<OnlineTicket.Services.IAdminDataProvider, OnlineTicket.Services.InMemoryAdminDataProvider>();
+builder.Services.AddScoped<OnlineTicket.Services.IAdminDataProvider, OnlineTicket.Services.DatabaseAdminDataProvider>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
