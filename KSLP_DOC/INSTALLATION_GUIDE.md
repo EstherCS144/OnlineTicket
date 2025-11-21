@@ -5,7 +5,6 @@ This guide covers the installation and setup of the OnlineTicket platform, an AS
 
 ## Prerequisites
 - .NET 7.0 SDK
-- PostgreSQL 12 or higher
 - Git
 - Visual Studio Code or Visual Studio 2022 (optional)
 
