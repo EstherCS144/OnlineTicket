@@ -4,28 +4,29 @@ using OnlineTicket.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.ListenAnyIP(5000);
-});
 
-// Add services to the container.
-var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
-if (string.IsNullOrEmpty(connectionString))
-{
-    connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-}
-else
-{
-    var databaseUri = new Uri(connectionString);
-    var userInfo = databaseUri.UserInfo.Split(':');
-    var port = databaseUri.Port > 0 ? databaseUri.Port : 5432;
-    connectionString = $"Host={databaseUri.Host};Port={port};Database={databaseUri.LocalPath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
-}
+//builder.WebHost.ConfigureKestrel(serverOptions =>
+//{
+//    serverOptions.ListenAnyIP(5000);
+//});
+
+//// Add services to the container.
+//var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
+//if (string.IsNullOrEmpty(connectionString))
+//{
+//    connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+//        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+//}
+//else
+//{
+//    var databaseUri = new Uri(connectionString);
+//    var userInfo = databaseUri.UserInfo.Split(':');
+//    var port = databaseUri.Port > 0 ? databaseUri.Port : 5432;
+//    connectionString = $"Host={databaseUri.Host};Port={port};Database={databaseUri.LocalPath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+//}
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()

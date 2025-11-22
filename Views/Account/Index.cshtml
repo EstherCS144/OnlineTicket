@@ -1,27 +1,29 @@
 ﻿@model List<OnlineTicket.Models.UserViewModel>
 @{
     ViewData["Title"] = "User Role Management";
+    <link rel="stylesheet" href="~/css/user.css" asp-append-version="true" />
+
 }
 
 <div class="container py-4">
 
     <div class="row mb-4">
         <div class="col-12">
-            <h2 class="display-5 fw-bold text-primary">User Role Management 👥</h2>
+            <h2 class="display-5 fw-bold text-primary pb-3 border-bottom">User Role Management 👥</h2>
             <p class="text-muted">Manage roles for all users registered on the StarEvents platform.</p>
         </div>
     </div>
 
     @if (TempData["Message"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show shadow" role="alert">
             <i class="fa-solid fa-check-circle me-2"></i> @TempData["Message"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show shadow" role="alert">
             <i class="fa-solid fa-xmark-circle me-2"></i> @TempData["Error"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -35,11 +37,23 @@
             var cardColor = user.IsAdmin ? "border-danger" : (user.IsOrganizer ? "border-warning" : "border-info");
 
             <div class="col">
-                <div class="card h-100 shadow-sm @cardColor">
+                <div class="card h-100 shadow-sm @cardColor @(user.IsAdmin ? "bg-light" : "")">
                     <div class="card-body d-flex flex-column">
 
                         <h5 class="card-title mb-1">
-                            <i class="fa-solid fa-user me-2"></i> @user.Email
+                            @if (user.IsAdmin)
+                            {
+                                <i class="fa-solid fa-user-shield me-2 text-danger"></i>
+                            }
+                            else if (user.IsOrganizer)
+                            {
+                                <i class="fa-solid fa-user-gear me-2 text-warning"></i>
+                            }
+                            else
+                            {
+                                <i class="fa-solid fa-user me-2 text-info"></i>
+                            }
+                            @user.Email
                         </h5>
 
                         <div class="mb-3">
@@ -87,7 +101,8 @@
                             {
                                 <form asp-action="DemoteToCustomer" method="post" style="display:inline;">
                                     <input type="hidden" name="id" value="@user.Id" />
-                                    <button type="submit" class="btn btn-sm btn-outline-secondary w-100"
+                                    {{-- DEMOTE BUTTON: Changed to btn-outline-warning --}}
+                                    <button type="submit" class="btn btn-sm btn-outline-warning w-100"
                                             onclick="return confirm('Demote @user.Email back to Customer role?');">
                                         <i class="fa-solid fa-arrow-down me-1"></i> Demote to Customer
                                     </button>
@@ -108,9 +123,13 @@
     </div>
 
     <div class="mt-5 text-center">
-        <a asp-controller="Admin" asp-action="Index" class="btn btn-lg btn-secondary">
-            <i class="fa-solid fa-arrow-left me-2"></i> Back to Admin Dashboard
-        </a>
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+                <a asp-controller="Admin" asp-action="Index" class="btn btn-lg btn-secondary w-100">
+                    <i class="fa-solid fa-arrow-left me-2"></i> Back to Admin Dashboard
+                </a>
+            </div>
+        </div>
     </div>
 
 </div>

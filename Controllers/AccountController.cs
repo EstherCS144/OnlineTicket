@@ -89,7 +89,7 @@ namespace OnlineTicket.Controllers
                     await _signInManager.SignInAsync(user, isPersistent: false);
 
                     // Redirect new customers to the homepage
-                    return RedirectToAction("Contact", "Home");
+                    return RedirectToAction("Index", "Home");
                 }
 
                 foreach (var error in result.Errors)
