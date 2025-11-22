@@ -127,11 +127,11 @@ namespace OnlineTicket.Controllers
                 // --- Role-Based Redirect ---
                 if (roles.Contains("Admin"))
                 {
-                    return RedirectToAction("Index", "Account");
+                    return RedirectToAction("Contact", "Home");
                 }
                 if (roles.Contains("Organizer"))
                 {
-                    return RedirectToAction("Privacy", "Home");
+                    return RedirectToAction("Dashboard", "Organizer");
                 }
 
                 // --- Standard Customer Redirect ---
