@@ -1,0 +1,59 @@
+@model IEnumerable<OnlineTicket.Models.Venue>
+
+@{
+    ViewData["Title"] = "Manage Venues";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-geo-alt"></i> Venue Management</h1>
+        <a href="@Url.Action("Create", "AdminVenues")" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create Venue
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>City</th>
+                        <th>Events</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var venue in Model)
+                    {
+                        <tr>
+                            <td><strong>@venue.Name</strong></td>
+                            <td>@venue.Address</td>
+                            <td>@venue.City</td>
+                            <td><span class="badge bg-info">@venue.Events?.Count ?? 0</span></td>
+                            <td>
+                                <a href="@Url.Action("Edit", "AdminVenues", new { id = venue.VenueId })" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form asp-action="Delete" asp-controller="AdminVenues" asp-route-id="@venue.VenueId" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this venue?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -25,6 +25,13 @@ var builder = WebApplication.CreateBuilder(args);
 //    connectionString = $"Host={databaseUri.Host};Port={port};Database={databaseUri.LocalPath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
 //}
 
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//// Add services to the container.
+//var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") 
+//    ?? builder.Configuration.GetConnectionString("DefaultConnection") 
+//    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' or 'DATABASE_URL' environment variable not found.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -33,7 +40,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<OnlineTicket.Services.IAdminDataProvider, OnlineTicket.Services.InMemoryAdminDataProvider>();
+builder.Services.AddScoped<OnlineTicket.Services.IAdminDataProvider, OnlineTicket.Services.DatabaseAdminDataProvider>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
