@@ -1,0 +1,73 @@
+@{
+    ViewData["Title"] = "Ticket Management";
+    var ticketStats = ViewBag.TicketStats;
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item active">Tickets</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">
+        <i class="bi bi-ticket-perforated"></i> Ticket Management
+    </h1>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Ticket Sales Overview</h5>
+        </div>
+        <div class="card-body">
+            @if (ticketStats != null && ticketStats.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Ticket Type</th>
+                                <th>Total Seats</th>
+                                <th>Sold</th>
+                                <th>Available</th>
+                                <th>Price</th>
+                                <th>Sales %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var stat in ticketStats)
+                            {
+                                var percentage = stat.TotalSeats > 0 ? (stat.SoldTickets * 100.0 / stat.TotalSeats) : 0;
+                                <tr>
+                                    <td>@stat.EventName</td>
+                                    <td>@stat.TicketType</td>
+                                    <td>@stat.TotalSeats</td>
+                                    <td><strong>@stat.SoldTickets</strong></td>
+                                    <td>@(stat.TotalSeats - stat.SoldTickets)</td>
+                                    <td>$@stat.Price.ToString("N2")</td>
+                                    <td>
+                                        <div class="progress" style="min-width: 100px;">
+                                            <div class="progress-bar @(percentage >= 80 ? "bg-success" : percentage >= 50 ? "bg-info" : "bg-warning")" 
+                                                 role="progressbar" 
+                                                 style="width: @percentage%" 
+                                                 aria-valuenow="@percentage" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                                @percentage.ToString("F1")%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">No ticket data available.</p>
+            }
+        </div>
+    </div>
+</div>

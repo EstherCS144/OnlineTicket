@@ -18,9 +18,10 @@ namespace OnlineTicket.Models
 
         [MaxLength(20)]
         public string PhoneNumber { get; set; }
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? UpdatedAt { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow.Date;
+        [Column(TypeName = "date")]
+        public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow.Date;
 
 
 

@@ -1,0 +1,100 @@
+@model IEnumerable<OnlineTicket.Models.Admin.OrganizerDto>
+
+@{
+    ViewData["Title"] = "Manage Organizers";
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Dashboard</a></li>
+            <li class="breadcrumb-item active">Organizers</li>
+        </ol>
+    </nav>
+
+    <h1 class="mb-4">
+        <i class="bi bi-people-fill"></i> Organizer Management
+    </h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">All Organizers</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Events</th>
+                                <th>Registered</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var organizer in Model)
+                            {
+                                <tr>
+                                    <td>@organizer.Name</td>
+                                    <td>@organizer.Email</td>
+                                    <td>@organizer.EventsCount</td>
+                                    <td>@organizer.RegisteredDate.ToString("MMM dd, yyyy")</td>
+                                    <td>
+                                        @if (organizer.Status == "Approved")
+                                        {
+                                            <span class="badge bg-success">@organizer.Status</span>
+                                        }
+                                        else if (organizer.Status == "Pending")
+                                        {
+                                            <span class="badge bg-warning">@organizer.Status</span>
+                                        }
+                                        else if (organizer.Status == "Suspended")
+                                        {
+                                            <span class="badge bg-danger">@organizer.Status</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (organizer.Status == "Pending")
+                                        {
+                                            <form asp-action="ApproveOrganizer" method="post" class="d-inline">
+                                                <input type="hidden" name="userId" value="@organizer.Id" />
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    <i class="bi bi-check-circle"></i> Approve
+                                                </button>
+                                            </form>
+                                        }
+                                        @if (organizer.Status != "Suspended")
+                                        {
+                                            <form asp-action="SuspendOrganizer" method="post" class="d-inline">
+                                                <input type="hidden" name="userId" value="@organizer.Id" />
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to suspend this organizer?')">
+                                                    <i class="bi bi-ban"></i> Suspend
+                                                </button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">No organizers found.</p>
+            }
+        </div>
+    </div>
+</div>

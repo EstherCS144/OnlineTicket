@@ -1,0 +1,89 @@
+@model OnlineTicket.Models.Event
+
+@{
+    ViewData["Title"] = "Create Event";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4"><i class="bi bi-plus-circle"></i> Create New Event</h1>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="Create" asp-controller="AdminEvents" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Event Title</label>
+                            <input type="text" class="form-control" asp-for="Title" required />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" asp-for="Description" rows="4" required></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Event Date</label>
+                                <input type="datetime-local" class="form-control" asp-for="EventDate" required />
+                                <span asp-validation-for="EventDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Ticket Price</label>
+                                <input type="number" class="form-control" asp-for="TicketPrice" step="0.01" required />
+                                <span asp-validation-for="TicketPrice" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Category</label>
+                                <select class="form-control" asp-for="CategoryId" required>
+                                    <option value="">-- Select Category --</option>
+                                    @foreach (var cat in ViewBag.Categories)
+                                    {
+                                        <option value="@cat.CategoryId">@cat.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Venue</label>
+                                <select class="form-control" asp-for="VenueId" required>
+                                    <option value="">-- Select Venue --</option>
+                                    @foreach (var venue in ViewBag.Venues)
+                                    {
+                                        <option value="@venue.VenueId">@venue.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="VenueId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Total Seats</label>
+                            <input type="number" class="form-control" asp-for="TotalSeats" required />
+                            <span asp-validation-for="TotalSeats" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Image Path</label>
+                            <input type="text" class="form-control" asp-for="ImagePath" placeholder="/images/event.jpg" />
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Create Event
+                            </button>
+                            <a href="@Url.Action("List", "AdminEvents")" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

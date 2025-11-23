@@ -18,6 +18,6 @@ namespace OnlineTicket.Models
         public string Email { get; set; } // read-only from IdentityUser
 
         [Display(Name = "Member since")]
-        public DateTime CreatedAt { get; set; } // read-only
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

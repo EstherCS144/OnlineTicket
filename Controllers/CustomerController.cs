@@ -87,5 +87,43 @@ namespace OnlineTicket.Controllers
             return RedirectToAction(nameof(Profile));
         }
 
+        //Dashboard
+        public async Task<IActionResult> Dashboard()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var customer = await _db.Customers
+                .Include(c => c.Bookings)
+                .ThenInclude(b => b.Event)
+                .FirstOrDefaultAsync(c => c.UserId == user.Id);
+
+            var vm = new CustomerDashboardVM
+            {
+                TotalBookings = customer.Bookings.Count,
+                UpcomingEvents = customer.Bookings.Where(b => b.Event.EventDate >= DateTime.Today).ToList(),
+                RecentBookings = customer.Bookings.OrderByDescending(b => b.CreatedAt).Take(5).ToList()
+            };
+            return View(vm);
+        }
+
+        //Search Events
+        public IActionResult BrowseEvents(string search = "")
+        {
+            var events = _db.Events
+                .Include(e => e.TicketTypes)
+                .Include(e => e.Organizer)
+                .Include(e => e.Venue)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                events = events.Where(e => e.Title.Contains(search) || e.Venue.Name.Contains(search));
+            }
+
+            return View(events.ToList());
+        }
+
+      
+    
+
     }
 }

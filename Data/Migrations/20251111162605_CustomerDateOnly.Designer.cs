@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineTicket.Data;
 
@@ -11,9 +12,11 @@ using OnlineTicket.Data;
 namespace OnlineTicket.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251111162605_CustomerDateOnly")]
+    partial class CustomerDateOnly
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -342,8 +345,9 @@ namespace OnlineTicket.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OrganizerId")
-                        .HasColumnType("int");
+                    b.Property<string>("OrganizerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -373,46 +377,6 @@ namespace OnlineTicket.Data.Migrations
                     b.HasIndex("VenueId");
 
                     b.ToTable("Events");
-                });
-
-            modelBuilder.Entity("OnlineTicket.Models.Organizer", b =>
-                {
-                    b.Property<int>("OrganizerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrganizerId"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("IdentityUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("OrganizerName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("OrganizerId");
-
-                    b.HasIndex("IdentityUserId")
-                        .IsUnique();
-
-                    b.ToTable("Organizers");
                 });
 
             modelBuilder.Entity("OnlineTicket.Models.Payment", b =>
@@ -678,10 +642,10 @@ namespace OnlineTicket.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("OnlineTicket.Models.Organizer", "Organizer")
-                        .WithMany("Events")
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Organizer")
+                        .WithMany()
                         .HasForeignKey("OrganizerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("OnlineTicket.Models.Venue", "Venue")
@@ -695,17 +659,6 @@ namespace OnlineTicket.Data.Migrations
                     b.Navigation("Organizer");
 
                     b.Navigation("Venue");
-                });
-
-            modelBuilder.Entity("OnlineTicket.Models.Organizer", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
-                        .WithOne()
-                        .HasForeignKey("OnlineTicket.Models.Organizer", "IdentityUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OnlineTicket.Models.Payment", b =>
@@ -801,11 +754,6 @@ namespace OnlineTicket.Data.Migrations
                     b.Navigation("TicketTypes");
 
                     b.Navigation("Tickets");
-                });
-
-            modelBuilder.Entity("OnlineTicket.Models.Organizer", b =>
-                {
-                    b.Navigation("Events");
                 });
 
             modelBuilder.Entity("OnlineTicket.Models.Promotion", b =>
