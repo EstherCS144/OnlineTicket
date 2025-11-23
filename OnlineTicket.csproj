@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Views\Organizer\Promotions\" />
     <Folder Include="wwwroot\images\events\" />
   </ItemGroup>
 

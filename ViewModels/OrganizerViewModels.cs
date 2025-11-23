@@ -22,6 +22,7 @@ namespace OnlineTicket.ViewModels
         public int TotalEvents { get; set; }
         public int TotalTicketsSoldAllTime { get; set; }
         public decimal TotalRevenueAllTime { get; set; }
+        public int ActivePromotionsCount { get; set; }
         public List<EventStatsViewModel> UpcomingEvents { get; set; } = new List<EventStatsViewModel>();
         public List<EventStatsViewModel> RevenuePerEvent { get; set; } = new List<EventStatsViewModel>();
     }

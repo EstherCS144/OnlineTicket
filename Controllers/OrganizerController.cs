@@ -36,52 +36,60 @@ namespace OnlineTicket.Controllers
             return organizer?.OrganizerId;
         }
 
-        // 1. Organizer Dashboard (Home)
         public async Task<IActionResult> Dashboard()
         {
             var organizerId = await GetCurrentOrganizerIdAsync();
             if (!organizerId.HasValue)
-            {
-                // Redirect to a profile setup page if the Organizer profile is missing
                 return RedirectToAction("SetupProfile");
-            }
 
             var organizer = await _context.Organizers.FindAsync(organizerId.Value);
 
-            // Fetch all events and related data for statistics
+            // Fetch all events for this organizer
             var events = await _context.Events
                 .Where(e => e.OrganizerId == organizerId.Value)
                 .Include(e => e.Bookings)
-                    .ThenInclude(b => b.Tickets) // To count tickets
+                    .ThenInclude(b => b.Tickets)
                 .ToListAsync();
 
-            // Calculate Statistics
-            var totalTicketsSoldAllTime = events.Sum(e => e.Bookings.Sum(b => b.Tickets.Count));
-            var totalRevenueAllTime = events.Sum(e => e.Bookings.Sum(b => b.Payment.Amount)); // Assumes Payment model has Amount
-
+            // Calculate event stats
             var eventStats = events.Select(e => new EventStatsViewModel
             {
                 EventId = e.EventId,
                 Title = e.Title,
                 EventDate = e.EventDate,
                 TotalTicketsSold = e.Bookings.Sum(b => b.Tickets.Count),
-                // This simplified calculation assumes all tickets are sold at TicketPrice, but should ideally sum based on TicketType price
                 TotalRevenue = e.Bookings.Sum(b => b.Payment.Amount),
                 TotalSeatsAvailable = e.TotalSeats - e.Bookings.Sum(b => b.Tickets.Count)
             }).ToList();
 
+            // Calculate Active Promotions count
+            var activePromotionsCount = await _context.Promotions
+                .Include(p => p.Event)
+                .Where(p => p.Event.OrganizerId == organizerId.Value
+                            && p.IsActive
+                            && p.StartDate <= DateTime.Now
+                            && p.EndDate >= DateTime.Now)
+                .CountAsync();
+
+            // Total tickets sold & revenue all time
+            var totalTicketsSoldAllTime = eventStats.Sum(e => e.TotalTicketsSold);
+            var totalRevenueAllTime = eventStats.Sum(e => e.TotalRevenue);
+
+            // Build dashboard view model
             var viewModel = new OrganizerDashboardViewModel
             {
                 OrganizerName = organizer.OrganizerName,
                 TotalEvents = events.Count,
                 TotalTicketsSoldAllTime = totalTicketsSoldAllTime,
                 TotalRevenueAllTime = totalRevenueAllTime,
-                UpcomingEvents = eventStats.Where(e => e.EventDate > DateTime.Now).OrderBy(e => e.EventDate).ToList(),
-                RevenuePerEvent = eventStats.OrderByDescending(e => e.TotalRevenue).ToList()
+                ActivePromotionsCount = activePromotionsCount,
+                UpcomingEvents = eventStats.Where(e => e.EventDate >= DateTime.Now).OrderBy(e => e.EventDate).ToList(),
+                RevenuePerEvent = eventStats.OrderByDescending(e => e.TotalRevenue).Take(5).ToList()
             };
 
             return View(viewModel);
         }
+
 
         // GET: /Organizer/SetupProfile
         [HttpGet]
@@ -696,8 +704,188 @@ namespace OnlineTicket.Controllers
             return RedirectToAction(nameof(AddTicketTypes), new { eventId = tt.EventId });
         }
 
+        // GET: /Organizer/Promotions
+        public async Task<IActionResult> Promotions(int eventId = 0)
+        {
+            // Fetch promotions with Event and TicketType
+            var query = _context.Promotions
+                .Include(p => p.Event)
+                .Include(p => p.TicketType)
+                .AsQueryable();
 
-        // 5. Promotion Management (Placeholder)
-        public IActionResult Promotions(int eventId) { return View(); }
+            if (eventId > 0)
+                query = query.Where(p => p.EventId == eventId);
+
+            // Fetch events for dropdown filter
+            ViewBag.Events = new SelectList(
+                await _context.Events.ToListAsync(),
+                "EventId", "Title", eventId
+            );
+
+            var promotions = await query.ToListAsync();
+
+            // Map to PromotionViewModel
+            var promoViewModels = promotions.Select(p => new PromotionViewModel
+            {
+                PromotionId = p.PromotionId,
+                Name = p.Name,
+                Code = p.Code,
+                DiscountPercentage = p.DiscountPercentage,
+                StartDate = p.StartDate,
+                EndDate = p.EndDate,
+                IsActive = p.IsActive,
+                EventId = p.EventId,
+                TicketTypeId = p.TicketTypeId,
+                EventName = p.Event.Title,
+                TicketTypeName = p.TicketType.Name
+            }).ToList();
+
+            return View("PromoList", promoViewModels);
+        }
+
+
+
+        // GET: /Organizer/AddPromotion
+        [HttpGet]
+        public async Task<IActionResult> AddPromotion()
+        {
+            var vm = new PromotionViewModel
+            {
+                Events = new SelectList(await _context.Events.ToListAsync(), "EventId", "Title"),
+                TicketTypes = new SelectList(await _context.TicketTypes.ToListAsync(), "TicketTypeId", "Name"),
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddDays(7),
+                IsActive = true
+            };
+
+            return View(vm);
+        }
+
+
+        // POST: /Organizer/AddPromotion
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddPromotion(PromotionViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                // repopulate SelectLists if validation fails
+                model.Events = new SelectList(await _context.Events.ToListAsync(), "EventId", "Title", model.EventId);
+                model.TicketTypes = new SelectList(await _context.TicketTypes.ToListAsync(), "TicketTypeId", "Name", model.TicketTypeId);
+
+                return View(model);
+            }
+
+            var promo = new Promotion
+            {
+                Name = model.Name,
+                Code = model.Code,
+                DiscountPercentage = model.DiscountPercentage,
+                StartDate = model.StartDate,
+                EndDate = model.EndDate,
+                IsActive = model.IsActive,
+                EventId = model.EventId,
+                TicketTypeId = model.TicketTypeId
+            };
+
+            _context.Promotions.Add(promo);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Promotion added successfully!";
+            return RedirectToAction("Promotions");
+        }
+
+
+        // GET: /Organizer/EditPromotion/{id}
+        [HttpGet]
+        public async Task<IActionResult> EditPromotion(int id)
+        {
+            var promo = await _context.Promotions.FindAsync(id);
+            if (promo == null) return NotFound();
+
+            var vm = new PromotionViewModel
+            {
+                PromotionId = promo.PromotionId,
+                Name = promo.Name,
+                Code = promo.Code,
+                DiscountPercentage = promo.DiscountPercentage,
+                StartDate = promo.StartDate,
+                EndDate = promo.EndDate,
+                IsActive = promo.IsActive,
+                EventId = promo.EventId,
+                TicketTypeId = promo.TicketTypeId,
+
+                Events = new SelectList(await _context.Events.ToListAsync(), "EventId", "Title", promo.EventId),
+                TicketTypes = new SelectList(await _context.TicketTypes.ToListAsync(), "TicketTypeId", "Name", promo.TicketTypeId)
+            };
+
+            return View(vm);
+        }
+
+
+        // POST: /Organizer/EditPromotion
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPromotion(PromotionViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.Events = new SelectList(await _context.Events.ToListAsync(), "EventId", "Title");
+                model.TicketTypes = new SelectList(await _context.TicketTypes.ToListAsync(), "TicketTypeId", "Name");
+                return View(model);
+            }
+
+            var promo = await _context.Promotions.FindAsync(model.PromotionId);
+            if (promo == null) return NotFound();
+
+            promo.Name = model.Name;
+            promo.Code = model.Code;
+            promo.DiscountPercentage = model.DiscountPercentage;
+            promo.StartDate = model.StartDate;
+            promo.EndDate = model.EndDate;
+            promo.IsActive = model.IsActive;
+            promo.EventId = model.EventId;
+            promo.TicketTypeId = model.TicketTypeId;
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Promotion updated successfully!";
+            return RedirectToAction("Promotions");
+        }
+
+
+        // POST: /Organizer/DeletePromotion
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeletePromotion(int id)
+        {
+            var promo = await _context.Promotions.FindAsync(id);
+            if (promo == null) return NotFound();
+
+            _context.Promotions.Remove(promo);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Promotion deleted successfully!";
+            return RedirectToAction("Promotions");
+        }
+
+
+        // VALIDATE PROMO DURING BOOKING
+        public async Task<Promotion> ValidatePromo(string code, int eventId, int ticketTypeId)
+        {
+            var now = DateTime.UtcNow;
+
+            return await _context.Promotions
+                .FirstOrDefaultAsync(p =>
+                    p.Code == code &&
+                    p.EventId == eventId &&
+                    p.TicketTypeId == ticketTypeId &&
+                    p.IsActive &&
+                    p.StartDate <= now &&
+                    p.EndDate >= now
+                );
+        }
+
+
     }
 }
