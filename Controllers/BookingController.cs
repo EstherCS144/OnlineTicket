@@ -6,6 +6,7 @@ using OnlineTicket.Data;
 using OnlineTicket.Models;
 using QRCoder;
 using System.Drawing.Imaging;
+using System.Reflection.Metadata;
 
 namespace OnlineTicket.Controllers
 {
@@ -55,6 +56,7 @@ namespace OnlineTicket.Controllers
             var ticketType = await _db.TicketTypes.FindAsync(vm.TicketTypeId);
             if (ticketType == null) return BadRequest();
 
+          
             // availability check
             var bookedCount = await _db.Tickets.CountAsync(t => t.TicketTypeId == ticketType.TicketTypeId);
             if (ticketType.TotalSeats > 0 && bookedCount + vm.Quantity > ticketType.TotalSeats)
@@ -89,6 +91,7 @@ namespace OnlineTicket.Controllers
                     SeatNumber = $"Seat-{i + 1}",
                     QRCode = GenerateQRCode($"{booking.BookingId}-{i + 1}")
                 };
+
                 _db.Tickets.Add(ticket);
             }
             await _db.SaveChangesAsync();
@@ -106,13 +109,25 @@ namespace OnlineTicket.Controllers
 
             var bookings = await _db.Bookings
                 .Include(b => b.Event)
-                .Include(b => b.Tickets)
+                .Include(b => b.Tickets).ThenInclude(t => t.TicketType)
                 .Where(b => b.CustomerId == customer.CustomerId)
                 .OrderByDescending(b => b.CreatedAt)
                 .ToListAsync();
 
             return View(bookings);
         }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var booking = await _db.Bookings.Include(b => b.Event).Include(b => b.Tickets).ThenInclude(t => t.TicketType).Include(b => b.Customer).FirstOrDefaultAsync(b => b.BookingId == id);
+            if (booking == null) return NotFound();
+            var user = await _userManager.GetUserAsync(User);
+            if (booking.Customer.UserId != user.Id && !User.IsInRole("Admin")) return Forbid();
+            return View(booking);
+        }
+
+
+     
 
         private string GenerateQRCode(string text)
         {

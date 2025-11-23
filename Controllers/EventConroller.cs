@@ -31,7 +31,10 @@ namespace OnlineTicket.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var ev = await _db.Events.Include(e => e.TicketTypes).FirstOrDefaultAsync(e => e.EventId == id);
+            var ev = await _db.Events
+                .Include(e => e.TicketTypes)
+                .Include(e => e.Venue)
+                .FirstOrDefaultAsync(e => e.EventId == id);
             if (ev == null) return NotFound();
             return View(ev);
         }

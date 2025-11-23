@@ -56,86 +56,50 @@
     }
 
     <div class="row g-4">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-header bg-primary text-white">
-                    <i class="bi bi-people-fill"></i> Organizer Management
+                    <i class="bi bi-people-fill"></i> User Management
                 </div>
                 <div class="card-body">
-                    <p class="card-text">Approve, edit, or suspend event organizers.</p>
-                    <a asp-action="Organizers" class="btn btn-primary">Manage Organizers</a>
+                    <p class="card-text">View and manage customers and organizers. Enable/disable accounts and check bookings per user.</p>
+                    <a asp-controller="AdminUsers" asp-action="Index" class="btn btn-primary">Manage Users</a>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-header bg-success text-white">
-                    <i class="bi bi-calendar-event"></i> Event Oversight
+                    <i class="bi bi-calendar-event"></i> Event Management
                 </div>
                 <div class="card-body">
-                    <p class="card-text">View, approve, or cancel events on the platform.</p>
-                    <a asp-action="Events" class="btn btn-success">Manage Events</a>
+                    <p class="card-text">Create, edit, delete, and manage events. Activate or deactivate events.</p>
+                    <a asp-controller="AdminEvents" asp-action="List" class="btn btn-success">Manage Events</a>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-header bg-info text-white">
-                    <i class="bi bi-ticket-perforated"></i> Ticket Management
+                    <i class="bi bi-geo-alt"></i> Venue Management
                 </div>
                 <div class="card-body">
-                    <p class="card-text">Monitor ticket sales and manage ticket types.</p>
-                    <a asp-action="Tickets" class="btn btn-info">View Tickets</a>
+                    <p class="card-text">Create, edit, and delete event venues.</p>
+                    <a asp-controller="AdminVenues" asp-action="List" class="btn btn-info">Manage Venues</a>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card h-100">
-                <div class="card-header bg-warning text-dark">
-                    <i class="bi bi-tag-fill"></i> Promotion Approval
-                </div>
-                <div class="card-body">
-                    <p class="card-text">Approve or reject promotional codes and discounts.</p>
-                    <a asp-action="Promotions" class="btn btn-warning">Manage Promotions</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card h-100">
-                <div class="card-header bg-danger text-white">
-                    <i class="bi bi-credit-card"></i> Booking & Payments
-                </div>
-                <div class="card-body">
-                    <p class="card-text">Handle booking disputes and process refunds.</p>
-                    <a asp-action="Bookings" class="btn btn-danger">View Bookings</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-header bg-secondary text-white">
                     <i class="bi bi-bar-chart-fill"></i> Reports & Analytics
                 </div>
                 <div class="card-body">
-                    <p class="card-text">Generate reports and view analytics.</p>
+                    <p class="card-text">View reports including total tickets sold per event, total revenue per event and month, and active users.</p>
                     <a asp-action="Reports" class="btn btn-secondary">View Reports</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <div class="card h-100">
-                <div class="card-header bg-dark text-white">
-                    <i class="bi bi-gear-fill"></i> Platform Settings
-                </div>
-                <div class="card-body">
-                    <p class="card-text">Configure system settings and security.</p>
-                    <a asp-action="Settings" class="btn btn-dark">Settings</a>
                 </div>
             </div>
         </div>

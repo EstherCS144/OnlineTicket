@@ -12,6 +12,7 @@ namespace OnlineTicket.Models
         public decimal Amount { get; set; }
         public string Provider { get; set; }
         public string Reference { get; set; }
+        public string PaymentStatus { get; set; }
         public DateTime PaidAt { get; set; } = DateTime.UtcNow;
     }
 
