@@ -11,7 +11,7 @@ namespace OnlineTicket.Models
         public DateTime EventDate { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TicketPrice { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public string ImagePath { get; set; }
 
         // Foreign Keys
@@ -22,8 +22,8 @@ namespace OnlineTicket.Models
         public Venue Venue { get; set; }
 
         // Organizer (IdentityUser)
-        public string OrganizerId { get; set; } // FK to AspNetUsers
-        public IdentityUser Organizer { get; set; }
+        public int OrganizerId { get; set; } // FK to Organizer.OrganizerId
+        public Organizer Organizer { get; set; } // Navigation property to Organizer model
 
         public int TotalSeats { get; set; } = 0;
         public string Status { get; set; } = "Active";

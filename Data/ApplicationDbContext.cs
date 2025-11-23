@@ -10,6 +10,8 @@ public class ApplicationDbContext : IdentityDbContext
         : base(options)
     {
     }
+
+    public DbSet<Organizer> Organizers { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<Booking> Bookings { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
@@ -23,6 +25,21 @@ public class ApplicationDbContext : IdentityDbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        // Organizer <-> IdentityUser (1:1)
+        builder.Entity<Organizer>()
+            .HasOne(o => o.User)
+            .WithOne()
+            .HasForeignKey<Organizer>(o => o.IdentityUserId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired();
+
+        // Organizer <-> IdentityUser (1:1)
+        builder.Entity<Organizer>()
+                .HasMany(o => o.Events)
+                .WithOne(e => e.Organizer)
+                .HasForeignKey(e => e.OrganizerId)
+                .OnDelete(DeleteBehavior.Restrict);
 
         // Customer <-> IdentityUser (1:1)
         builder.Entity<Customer>()
